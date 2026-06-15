@@ -1,0 +1,12 @@
+com\echannel\user_service\config\SecurityConfig.class
+com\echannel\user_service\model\Doctor.class
+com\echannel\user_service\repository\DoctorRepository.class
+com\echannel\user_service\controller\UserController.class
+com\echannel\user_service\UserServiceApplication.class
+com\echannel\user_service\model\Doctor$AccountStatus.class
+com\echannel\user_service\model\Patient.class
+com\echannel\user_service\model\Patient$PatientBuilder.class
+com\echannel\user_service\repository\PatientRepository.class
+com\echannel\user_service\model\Doctor$DoctorBuilder.class
+com\echannel\user_service\model\Patient$PatientStatus.class
+com\echannel\user_service\service\UserService.class

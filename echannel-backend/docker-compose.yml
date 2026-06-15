@@ -1,0 +1,140 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: echannel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Semitha@12
+      MYSQL_DATABASE: echannel_db
+      MYSQL_USER: echannel
+      MYSQL_PASSWORD: Semitha@12
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - echannel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ../auth-service/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/echannel_db?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: echannel
+      SPRING_DATASOURCE_PASSWORD: Semitha@12
+      SERVER_PORT: 8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - echannel-network
+
+  user-service:
+    build:
+      context: ../user-service/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/echannel_db?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: echannel
+      SPRING_DATASOURCE_PASSWORD: Semitha@12
+      SERVER_PORT: 8082
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - echannel-network
+
+  appointment-service:
+    build:
+      context: ../appointment-service/appointment-service
+      dockerfile: Dockerfile
+    container_name: appointment-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/echannel_db?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: echannel
+      SPRING_DATASOURCE_PASSWORD: Semitha@12
+      SERVER_PORT: 8083
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - echannel-network
+
+  payment-service:
+    build:
+      context: ../payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: echannel
+      DB_PASSWORD: Semitha@12
+      DB_NAME: echannel_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - echannel-network
+
+  prescription-service:
+    build:
+      context: ../prescription-service/prescription-service
+      dockerfile: Dockerfile
+    container_name: prescription-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/echannel_db?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: echannel
+      SPRING_DATASOURCE_PASSWORD: Semitha@12
+      SERVER_PORT: 8085
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - echannel-network
+
+  api-gateway:
+    build:
+      context: ../api-gateway/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      auth-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      appointment-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      prescription-service:
+        condition: service_started
+    networks:
+      - echannel-network
+
+networks:
+  echannel-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
