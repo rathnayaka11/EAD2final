@@ -1,0 +1,7 @@
+com\echannel\prescription_service\model\Prescription.class
+com\echannel\prescription_service\config\SecurityConfig.class
+com\echannel\prescription_service\model\Prescription$PrescriptionBuilder.class
+com\echannel\prescription_service\PrescriptionServiceApplication.class
+com\echannel\prescription_service\controller\PrescriptionController.class
+com\echannel\prescription_service\service\PrescriptionService.class
+com\echannel\prescription_service\repository\PrescriptionRepository.class
